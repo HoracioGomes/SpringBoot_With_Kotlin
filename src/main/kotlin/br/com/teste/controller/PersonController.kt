@@ -1,7 +1,9 @@
 package br.com.teste.controller
 
 import br.com.teste.data.vo.v1.PersonVO
+import br.com.teste.data.vo.v2.PersonVO as PersonVOV2
 import br.com.teste.mapper.DozerMapper
+import br.com.teste.mapper.custom.PersonMapper
 import br.com.teste.model.Person
 import br.com.teste.services.PersonService
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +20,9 @@ class PersonController {
     private lateinit var service: PersonService
     // var service: PersonService = PersonService()
 
+    @Autowired
+    private lateinit var personMapper: PersonMapper
+
     @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findAll(): List<PersonVO> {
         return DozerMapper().parseListObject(service.findAll(), PersonVO::class.java)
@@ -32,6 +37,7 @@ class PersonController {
     }
 
     @PostMapping(
+        value = ["/v1"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
@@ -39,6 +45,16 @@ class PersonController {
         val entity: Person = DozerMapper().parseObject(person, Person::class.java)
         return DozerMapper().parseObject(service.create(entity), PersonVO::class.java)
 
+    }
+
+    @PostMapping(
+        value = ["/v2"],
+        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE]
+    )
+    fun create(@RequestBody person: PersonVOV2): PersonVOV2 {
+        val entity: Person = personMapper.parseToEntity(person)
+        return personMapper.parseToVO(service.create(entity))
     }
 
     @PutMapping(
