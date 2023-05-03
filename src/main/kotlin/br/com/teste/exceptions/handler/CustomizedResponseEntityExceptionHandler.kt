@@ -1,6 +1,7 @@
 package br.com.teste.exceptions.handler
 
 import br.com.teste.exceptions.ExceptionResponse
+import br.com.teste.exceptions.RequiredObjectIsNullException
 import br.com.teste.exceptions.ResourceNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -35,5 +36,16 @@ class CustomizedResponseEntityExceptionHandler : ResponseEntityExceptionHandler(
             request.getDescription(false)
         )
         return ResponseEntity<ExceptionResponse>(exceptioResponse, HttpStatus.NOT_FOUND)
+    }
+
+    @ExceptionHandler(RequiredObjectIsNullException::class)
+    fun RequiredObjectIsNullExceptions(ex: Exception, request: WebRequest) :
+            ResponseEntity<ExceptionResponse> {
+        val exceptioResponse = ExceptionResponse(
+            Date(),
+            ex.message,
+            request.getDescription(false)
+        )
+        return ResponseEntity<ExceptionResponse>(exceptioResponse, HttpStatus.BAD_REQUEST)
     }
 }
