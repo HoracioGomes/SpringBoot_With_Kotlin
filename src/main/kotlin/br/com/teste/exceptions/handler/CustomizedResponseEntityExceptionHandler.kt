@@ -1,6 +1,7 @@
 package br.com.teste.exceptions.handler
 
 import br.com.teste.exceptions.ExceptionResponse
+import br.com.teste.exceptions.InvalidJwtAuthenticationException
 import br.com.teste.exceptions.RequiredObjectIsNullException
 import br.com.teste.exceptions.ResourceNotFoundException
 import org.springframework.http.HttpStatus
@@ -14,10 +15,10 @@ import java.util.*
 
 @ControllerAdvice
 @RestController
-class CustomizedResponseEntityExceptionHandler : ResponseEntityExceptionHandler(){
+class CustomizedResponseEntityExceptionHandler : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(Exception::class)
-    fun handleAllExceptions(ex: Exception, request: WebRequest) :
+    fun handleAllExceptions(ex: Exception, request: WebRequest):
             ResponseEntity<ExceptionResponse> {
         val exceptioResponse = ExceptionResponse(
             Date(),
@@ -28,7 +29,7 @@ class CustomizedResponseEntityExceptionHandler : ResponseEntityExceptionHandler(
     }
 
     @ExceptionHandler(ResourceNotFoundException::class)
-    fun handleResourceNotFoundExceptions(ex: Exception, request: WebRequest) :
+    fun handleResourceNotFoundExceptions(ex: Exception, request: WebRequest):
             ResponseEntity<ExceptionResponse> {
         val exceptioResponse = ExceptionResponse(
             Date(),
@@ -39,7 +40,7 @@ class CustomizedResponseEntityExceptionHandler : ResponseEntityExceptionHandler(
     }
 
     @ExceptionHandler(RequiredObjectIsNullException::class)
-    fun RequiredObjectIsNullExceptions(ex: Exception, request: WebRequest) :
+    fun handleRequiredObjectIsNullExceptions(ex: Exception, request: WebRequest):
             ResponseEntity<ExceptionResponse> {
         val exceptioResponse = ExceptionResponse(
             Date(),
@@ -48,4 +49,17 @@ class CustomizedResponseEntityExceptionHandler : ResponseEntityExceptionHandler(
         )
         return ResponseEntity<ExceptionResponse>(exceptioResponse, HttpStatus.BAD_REQUEST)
     }
+
+    @ExceptionHandler(InvalidJwtAuthenticationException::class)
+    fun handleinvalidJwtAuthenticationException(ex: Exception, request: WebRequest):
+            ResponseEntity<ExceptionResponse> {
+        val exceptioResponse = ExceptionResponse(
+            Date(),
+            ex.message,
+            request.getDescription(false)
+        )
+        return ResponseEntity<ExceptionResponse>(exceptioResponse, HttpStatus.FORBIDDEN)
+    }
+
+
 }
